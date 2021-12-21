@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Button,
-  FlatList,
   TextInput,
   View,
+  VirtualizedList,
 } from "react-native";
 import { PlayerT } from "../helpers/types";
 import PlayerLine from "../components/PlayerLine";
@@ -15,6 +15,15 @@ const HomeScreen = () => {
   const [poolData, setPoolData] = useState([]);
   const [playerName, setPlayerName] = useState("");
   const [playerPosition, setPlayerPosition] = useState<string | undefined>();
+
+  const getItem = (data: any, index: number) => data[index];
+  const getItemCount = () => foundPlayers.length;
+  const getItemLayout = (_: any, index: number) => {
+    return { length: 30, offset: 30 * index, index };
+  };
+  const renderItem = ({ item }: { item: PlayerT }) => (
+    <PlayerLine player={item} />
+  );
 
   const getPlayersPool = async () => {
     try {
@@ -65,18 +74,21 @@ const HomeScreen = () => {
           {Object.keys(ultraPos).map((pos) => {
             return (
               <Button
+                key={pos}
                 title={ultraPos[pos as any].title}
                 onPress={() => setPlayerPosition(pos)}
               />
             );
           })}
 
-          <FlatList
+          <VirtualizedList
+            getItem={getItem}
+            initialNumToRender={10}
+            getItemCount={getItemCount}
+            getItemLayout={getItemLayout}
             data={foundPlayers}
             keyExtractor={({ id }) => id}
-            renderItem={({ item }: { item: PlayerT }) => (
-              <PlayerLine player={item} />
-            )}
+            renderItem={renderItem}
           />
         </View>
       )}
