@@ -9,7 +9,7 @@ const PlayerLine = ({ player }: { player: PlayerT }) => {
 
   return (
     <TouchableOpacity
-      style={{ padding: 10 }}
+      style={{ height: 30 }}
       onPress={() =>
         navigate("PlayerScreen", {
           data: player,
