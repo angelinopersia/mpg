@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, View } from "react-native";
+import {
+  ActivityIndicator,
+  Button,
+  FlatList,
+  TextInput,
+  View,
+} from "react-native";
 import { PlayerT } from "../helpers/types";
 import PlayerLine from "../components/PlayerLine";
+import { ultraPos } from "../helpers";
 
 const HomeScreen = () => {
   const [isLoading, setLoading] = useState(true);
   const [poolData, setPoolData] = useState([]);
+  const [playerName, setPlayerName] = useState("");
+  const [playerPosition, setPlayerPosition] = useState<string | undefined>();
 
   const getPlayersPool = async () => {
     try {
@@ -25,18 +34,51 @@ const HomeScreen = () => {
     getPlayersPool();
   }, []);
 
+  const foundPlayers = poolData
+    .filter(({ firstName, lastName }) => {
+      return `${firstName} ${lastName}`
+        .toLowerCase()
+        .includes(playerName.toLowerCase());
+    })
+    .filter(({ ultraPosition }) => {
+      if (playerPosition) {
+        return Number(playerPosition) === ultraPosition;
+      } else {
+        return true;
+      }
+    });
+
   return (
     <View style={{ flex: 1, padding: 24 }}>
       {isLoading ? (
         <ActivityIndicator />
       ) : (
-        <FlatList
-          data={poolData}
-          keyExtractor={({ id }) => id}
-          renderItem={({ item }: { item: PlayerT }) => (
-            <PlayerLine player={item} />
-          )}
-        />
+        <View>
+          <TextInput
+            placeholder="Nom du joueur"
+            onChangeText={setPlayerName}
+            value={playerName}
+          />
+
+          <Button title="Tous" onPress={() => setPlayerPosition(undefined)} />
+
+          {Object.keys(ultraPos).map((pos) => {
+            return (
+              <Button
+                title={ultraPos[pos as any].title}
+                onPress={() => setPlayerPosition(pos)}
+              />
+            );
+          })}
+
+          <FlatList
+            data={foundPlayers}
+            keyExtractor={({ id }) => id}
+            renderItem={({ item }: { item: PlayerT }) => (
+              <PlayerLine player={item} />
+            )}
+          />
+        </View>
       )}
     </View>
   );
