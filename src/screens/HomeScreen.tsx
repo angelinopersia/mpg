@@ -75,7 +75,6 @@ const HomeScreen = () => {
               );
             })}
             <UltraPosition
-              key=""
               title="Tous"
               onPress={() => setPlayerPosition(undefined)}
             />

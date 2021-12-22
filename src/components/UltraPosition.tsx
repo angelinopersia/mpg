@@ -2,14 +2,13 @@ import React from "react";
 import { Text, TouchableOpacity, StyleSheet } from "react-native";
 
 type UltraPosPropT = {
-  key: string;
   onPress: any;
   title: string;
 };
 
-const UltraPosition = ({ key, title, onPress }: UltraPosPropT) => {
+const UltraPosition = ({ title, onPress }: UltraPosPropT) => {
   return (
-    <TouchableOpacity style={s.button} onPress={onPress} key={key}>
+    <TouchableOpacity style={s.button} onPress={onPress}>
       <Text style={s.text}>{title}</Text>
     </TouchableOpacity>
   );
