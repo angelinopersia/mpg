@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Button,
+  StyleSheet,
   TextInput,
   View,
   VirtualizedList,
@@ -9,6 +9,7 @@ import {
 import { PlayerT } from "../helpers/types";
 import PlayerLine from "../components/PlayerLine";
 import { ultraPos } from "../helpers";
+import UltraPosition from "../components/UltraPosition";
 
 const HomeScreen = () => {
   const [isLoading, setLoading] = useState(true);
@@ -58,30 +59,38 @@ const HomeScreen = () => {
     });
 
   return (
-    <View style={{ flex: 1, padding: 24 }}>
+    <View>
       {isLoading ? (
         <ActivityIndicator />
       ) : (
         <View>
+          <View style={s.positions}>
+            {Object.keys(ultraPos).map((pos) => {
+              return (
+                <UltraPosition
+                  key={pos}
+                  title={ultraPos[pos as any].altTitle}
+                  onPress={() => setPlayerPosition(pos)}
+                />
+              );
+            })}
+            <UltraPosition
+              key=""
+              title="Tous"
+              onPress={() => setPlayerPosition(undefined)}
+            />
+          </View>
+
           <TextInput
+            style={s.input}
             placeholder="Nom du joueur"
             onChangeText={setPlayerName}
             value={playerName}
           />
 
-          <Button title="Tous" onPress={() => setPlayerPosition(undefined)} />
-
-          {Object.keys(ultraPos).map((pos) => {
-            return (
-              <Button
-                key={pos}
-                title={ultraPos[pos as any].title}
-                onPress={() => setPlayerPosition(pos)}
-              />
-            );
-          })}
-
           <VirtualizedList
+            // @ts-ignore
+            ItemSeparatorComponent={() => <View style={s.bar} />}
             getItem={getItem}
             initialNumToRender={10}
             getItemCount={getItemCount}
@@ -95,5 +104,15 @@ const HomeScreen = () => {
     </View>
   );
 };
+
+const s = StyleSheet.create({
+  bar: { borderBottomWidth: 1 },
+  input: { backgroundColor: "#d1d1d1", borderWidth: 1, padding: 10 },
+  positions: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-around",
+  },
+});
 
 export default HomeScreen;
